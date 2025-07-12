@@ -123,6 +123,24 @@ public class usercontroller {
         return ResponseEntity.ok(items);
     }
 
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<String> deleteAccount(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(401).body("Not logged in");
+        }
+
+        Optional<User> userOpt = userRepo.findById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        userRepo.deleteById(userId);
+        session.invalidate(); // Log them out after deletion
+        return ResponseEntity.ok("Account deleted successfully.");
+    }
+
+
 
 
 }
